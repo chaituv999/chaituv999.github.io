@@ -1,0 +1,1262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chaitanya — AWS Data Engineer</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=Bricolage+Grotesque:wght@300;400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --surface2: #1a1a26;
+    --border: #252535;
+    --accent: #7b5ea7;
+    --accent2: #e8643c;
+    --accent3: #3cb8e8;
+    --text: #e8e8f0;
+    --text-muted: #7878a0;
+    --text-dim: #4a4a68;
+    --gold: #c9a84c;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-weight: 300;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ── NOISE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.4;
+  }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 2px; }
+
+  /* ── NAVIGATION ── */
+  nav {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 100;
+    padding: 1.2rem 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(10,10,15,0.85);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.4rem;
+    color: var(--text);
+    text-decoration: none;
+    letter-spacing: -0.02em;
+  }
+  .nav-logo span { color: var(--accent2); }
+
+  .nav-links {
+    display: flex;
+    gap: 2.5rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: var(--text-muted);
+    text-decoration: none;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--accent3); }
+
+  /* ── HERO ── */
+  #hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 8rem 3rem 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+    align-items: center;
+  }
+
+  /* background rings */
+  .hero-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid;
+    animation: pulse-ring 8s ease-in-out infinite;
+  }
+  .hero-ring:nth-child(1) {
+    width: 600px; height: 600px;
+    right: -150px; top: 50%;
+    transform: translateY(-50%);
+    border-color: rgba(123,94,167,0.12);
+    animation-delay: 0s;
+  }
+  .hero-ring:nth-child(2) {
+    width: 900px; height: 900px;
+    right: -300px; top: 50%;
+    transform: translateY(-50%);
+    border-color: rgba(123,94,167,0.07);
+    animation-delay: 2s;
+  }
+  .hero-ring:nth-child(3) {
+    width: 1200px; height: 1200px;
+    right: -450px; top: 50%;
+    transform: translateY(-50%);
+    border-color: rgba(123,94,167,0.04);
+    animation-delay: 4s;
+  }
+
+  @keyframes pulse-ring {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
+  }
+
+  .hero-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent3);
+    margin-bottom: 1.2rem;
+    opacity: 0;
+    animation: slide-up 0.8s 0.2s forwards;
+  }
+
+  .hero-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(3rem, 6vw, 5.5rem);
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: slide-up 0.8s 0.4s forwards;
+  }
+  .hero-title em {
+    font-style: italic;
+    color: var(--accent2);
+  }
+
+  .hero-desc {
+    font-size: 1.05rem;
+    color: var(--text-muted);
+    line-height: 1.7;
+    max-width: 440px;
+    margin-bottom: 2.5rem;
+    opacity: 0;
+    animation: slide-up 0.8s 0.6s forwards;
+  }
+
+  .hero-cta {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: slide-up 0.8s 0.8s forwards;
+  }
+
+  .btn {
+    padding: 0.75rem 1.75rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: all 0.25s;
+    cursor: pointer;
+    border: none;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+  }
+  .btn-primary:hover {
+    background: #9370c4;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(123,94,167,0.4);
+  }
+  .btn-ghost {
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover {
+    border-color: var(--accent);
+    color: var(--text);
+    transform: translateY(-2px);
+  }
+
+  /* hero right — stats panel */
+  .hero-stats {
+    opacity: 0;
+    animation: slide-up 0.8s 1s forwards;
+  }
+
+  .stats-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .stats-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent3), var(--accent2));
+  }
+
+  .stat-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .stat-item {}
+  .stat-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2.5rem;
+    line-height: 1;
+    color: var(--text);
+    margin-bottom: 0.25rem;
+  }
+  .stat-num span { color: var(--accent2); }
+  .stat-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  .stack-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .pill {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    padding: 0.3rem 0.75rem;
+    border-radius: 100px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+  }
+  .pill.aws { border-color: rgba(232,100,60,0.4); color: var(--accent2); }
+  .pill.data { border-color: rgba(60,184,232,0.3); color: var(--accent3); }
+  .pill.infra { border-color: rgba(123,94,167,0.4); color: #a98bd4; }
+
+  @keyframes slide-up {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── SECTION COMMONS ── */
+  section { padding: 7rem 3rem; }
+
+  .section-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 1.5rem;
+    margin-bottom: 4rem;
+  }
+
+  .section-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+  }
+
+  .section-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2rem, 4vw, 3rem);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+
+  .section-line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── EXPERIENCE ── */
+  #experience { background: var(--surface); }
+
+  .exp-list { display: flex; flex-direction: column; gap: 2px; }
+
+  .exp-item {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--bg);
+    transition: border-color 0.3s;
+  }
+  .exp-item:hover { border-color: var(--accent); }
+
+  .exp-header {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 1.5rem;
+    padding: 2rem 2.5rem;
+    align-items: start;
+    cursor: pointer;
+  }
+
+  .exp-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-top: 6px;
+    flex-shrink: 0;
+  }
+  .dot-current { background: #3ce87e; box-shadow: 0 0 12px rgba(60,232,126,0.5); }
+  .dot-past { background: var(--accent); }
+  .dot-amazon { background: var(--accent2); }
+  .dot-intern { background: var(--accent3); }
+
+  .exp-main {}
+  .exp-role {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 0.25rem;
+  }
+  .exp-company {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+  }
+
+  .exp-meta { text-align: right; }
+  .exp-date {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    letter-spacing: 0.05em;
+    margin-bottom: 0.4rem;
+  }
+  .exp-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    display: inline-block;
+  }
+  .tag-current { background: rgba(60,232,126,0.12); color: #3ce87e; }
+  .tag-experian { background: rgba(123,94,167,0.15); color: #a98bd4; }
+  .tag-amazon { background: rgba(232,100,60,0.15); color: var(--accent2); }
+
+  .exp-body {
+    padding: 0 2.5rem 2rem 5.5rem;
+    display: none;
+  }
+  .exp-item.open .exp-body { display: block; }
+  .exp-item.open { border-color: var(--accent2); }
+
+  .exp-bullets {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+  .exp-bullets li {
+    padding-left: 1.5rem;
+    position: relative;
+    color: var(--text-muted);
+    font-size: 0.92rem;
+    line-height: 1.6;
+  }
+  .exp-bullets li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-size: 0.8rem;
+  }
+
+  .exp-metrics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+  .metric {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--accent3);
+    background: rgba(60,184,232,0.08);
+    border: 1px solid rgba(60,184,232,0.2);
+    border-radius: 4px;
+    padding: 0.3rem 0.8rem;
+    letter-spacing: 0.05em;
+  }
+
+  .exp-toggle {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    border-radius: 6px;
+    padding: 0.4rem 1rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 0.5rem;
+    align-self: start;
+    justify-self: end;
+  }
+  .exp-toggle:hover { border-color: var(--accent); color: var(--text); }
+
+  /* ── SKILLS ── */
+  #skills { background: var(--bg); }
+
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+
+  .skill-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 2rem;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .skill-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .skill-card:hover { transform: translateY(-4px); border-color: transparent; }
+  .skill-card:hover::after { opacity: 1; }
+
+  .skill-card.cat-lang::after { background: linear-gradient(90deg, var(--accent), #b084e8); }
+  .skill-card.cat-data::after { background: linear-gradient(90deg, var(--accent3), #3ce87e); }
+  .skill-card.cat-aws::after { background: linear-gradient(90deg, var(--accent2), #f5a623); }
+  .skill-card.cat-db::after { background: linear-gradient(90deg, #e83c8d, var(--accent)); }
+  .skill-card.cat-devops::after { background: linear-gradient(90deg, #3ce87e, var(--accent3)); }
+  .skill-card.cat-viz::after { background: linear-gradient(90deg, #f5a623, var(--accent2)); }
+
+  .skill-card:hover { box-shadow: 0 16px 40px rgba(0,0,0,0.4); }
+
+  .skill-icon {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+  }
+
+  .skill-cat-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    color: var(--text);
+  }
+
+  .skill-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .skill-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 4px;
+    background: var(--surface2);
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+    letter-spacing: 0.04em;
+  }
+
+  /* ── PROJECTS / HIGHLIGHTS ── */
+  #projects { background: var(--surface); }
+
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+
+  .project-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2.5rem 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .project-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-6px);
+    box-shadow: 0 24px 48px rgba(0,0,0,0.5);
+  }
+
+  .project-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+  }
+  .project-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.35rem;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+  .project-desc {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    line-height: 1.65;
+    flex: 1;
+  }
+  .project-impact {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--gold);
+    letter-spacing: 0.08em;
+    padding: 0.5rem 0;
+    border-top: 1px solid var(--border);
+  }
+  .project-stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+  }
+  .project-tech {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 3px;
+    background: var(--surface2);
+    color: var(--text-dim);
+  }
+
+  /* ── EDUCATION ── */
+  #education { background: var(--bg); }
+
+  .edu-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+
+  .edu-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2.5rem;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+  .edu-card:hover { border-color: var(--accent); }
+
+  .edu-year {
+    font-family: 'DM Serif Display', serif;
+    font-size: 4rem;
+    color: var(--border);
+    position: absolute;
+    top: 1rem; right: 1.5rem;
+    line-height: 1;
+    pointer-events: none;
+  }
+
+  .edu-degree {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+    line-height: 1.25;
+    position: relative;
+  }
+  .edu-field {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--accent3);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+  .edu-school {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+  }
+  .edu-loc {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    letter-spacing: 0.06em;
+  }
+
+  /* ── CONTACT ── */
+  #contact {
+    background: var(--surface);
+    text-align: center;
+  }
+
+  .contact-inner {
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .contact-tagline {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2.2rem, 5vw, 4rem);
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+  }
+  .contact-tagline em { font-style: italic; color: var(--accent2); }
+
+  .contact-sub {
+    color: var(--text-muted);
+    font-size: 1rem;
+    margin-bottom: 3rem;
+    line-height: 1.7;
+  }
+
+  .contact-links {
+    display: flex;
+    gap: 1.25rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .contact-link {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    text-decoration: none;
+    padding: 0.85rem 2rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    transition: all 0.25s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .contact-link:hover {
+    border-color: var(--accent);
+    color: var(--text);
+    background: rgba(123,94,167,0.1);
+    transform: translateY(-2px);
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 2rem 3rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--bg);
+  }
+  footer p {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    letter-spacing: 0.08em;
+  }
+
+  /* ── DIVIDER ── */
+  .gradient-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), var(--accent3), transparent);
+    opacity: 0.3;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    nav { padding: 1.2rem 1.5rem; }
+    .nav-links { display: none; }
+    section { padding: 5rem 1.5rem; }
+    #hero { padding: 7rem 1.5rem 3rem; }
+    .hero-grid { grid-template-columns: 1fr; gap: 3rem; }
+    .skills-grid { grid-template-columns: 1fr 1fr; }
+    .projects-grid { grid-template-columns: 1fr; }
+    .edu-grid { grid-template-columns: 1fr; }
+    footer { flex-direction: column; gap: 0.5rem; text-align: center; }
+  }
+  @media (max-width: 600px) {
+    .skills-grid { grid-template-columns: 1fr; }
+    .stat-row { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#hero" class="nav-logo">Chaitanya<span> Vallabhaneni</span></a>
+  <ul class="nav-links">
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#education">Education</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-ring"></div>
+  <div class="hero-ring"></div>
+  <div class="hero-ring"></div>
+  <div class="hero-grid">
+    <div class="hero-left">
+      <p class="hero-eyebrow">AWS Data Engineer · Hyderabad, IN</p>
+      <h1 class="hero-title">Chaitanya<br><em>Vallabhaneni</em></h1>
+      <p class="hero-desc">Senior Software Engineer at Experian with 4+ years building end-to-end data pipelines, cloud infrastructure, and ML solutions. FY26 highlights: &lt;50ms API latency, 200M-record analyses, and VS Pinning architecture redesign.</p>
+      <div class="hero-cta">
+        <a href="#experience" class="btn btn-primary">View Experience</a>
+        <a href="#contact" class="btn btn-ghost">Get in Touch</a>
+      </div>
+    </div>
+    <div class="hero-stats">
+      <div class="stats-card">
+        <div class="stat-row">
+          <div class="stat-item">
+            <div class="stat-num">4<span>+</span></div>
+            <div class="stat-label">Years Exp.</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">200<span>M+</span></div>
+            <div class="stat-label">Records Processed</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">&lt;50<span>ms</span></div>
+            <div class="stat-label">API Latency</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">20<span>%</span></div>
+            <div class="stat-label">Cost Saved</div>
+          </div>
+        </div>
+        <div class="stack-pills">
+          <span class="pill aws">EMR</span>
+          <span class="pill aws">Lambda</span>
+          <span class="pill aws">ECS</span>
+          <span class="pill data">Spark</span>
+          <span class="pill data">Flink</span>
+          <span class="pill data">Airflow</span>
+          <span class="pill infra">Terraform</span>
+          <span class="pill infra">ScyllaDB</span>
+          <span class="pill data">Delta Lake</span>
+          <span class="pill aws">Kinesis</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="gradient-divider"></div>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="section-inner">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <h2 class="section-title">Experience</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="exp-list">
+
+      <!-- Experian India -->
+      <div class="exp-item open">
+        <div class="exp-header" onclick="toggleExp(this)">
+          <div class="exp-dot dot-current"></div>
+          <div class="exp-main">
+            <div class="exp-role">Senior Software Developer</div>
+            <div class="exp-company">Experian India · Hyderabad, IN</div>
+          </div>
+          <div class="exp-meta">
+            <div class="exp-date">Mar 2025 – Present</div>
+            <span class="exp-tag tag-current">Current</span>
+            <button class="exp-toggle">Collapse</button>
+          </div>
+        </div>
+        <div class="exp-body">
+          <ul class="exp-bullets">
+            <li>Designed and delivered an end-to-end <strong>Observed Income batch pipeline</strong> using EMR Spark and Airflow — enabling reliable high-volume processing with improved maintainability and observability.</li>
+            <li>Executed a <strong>200M-record PDL analysis</strong> using EMR Spark, enabling product teams to derive insights at scale and drive data-driven improvements.</li>
+            <li>Designed and deployed production-ready <strong>VS Pinning API infrastructure</strong> using ECS Fargate, NLB, Secrets Manager, KMS, IAM, and EFS — secure, scalable, and fully automated via IaC.</li>
+            <li>Achieved <strong>&lt;50ms API latency</strong> through Envoy proxy tuning, sustaining &lt;200ms under 50 TPS load — significantly improving service throughput.</li>
+            <li>Re-architected VS Pinning ECS into <strong>independent containerized services</strong> (Javalin, Scoring, STD), enabling blue-green deployments and reducing network hops.</li>
+            <li>Automated ScyllaDB load pipeline with PGP decryption and Safenet row-level encryption; designed optimized schemas for Pin and No-Pin DBs.</li>
+            <li>Streamlined AWS infra with Terraform and CloudFormation, cutting EMR costs by 20%. Built Experian ID generation workflow using fuzzy match logic via PySpark, EMR, ScyllaDB, and Kotlin.</li>
+            <li>Developed an <strong>AWS Optimization Agent</strong> using Python, Boto3, Ollama, OpenAI, and Anthropic to automate IAM, NIST, and vulnerability scans with detailed remediation reports.</li>
+          </ul>
+          <div class="exp-metrics">
+            <span class="metric">&lt;50ms API latency</span>
+            <span class="metric">200M records analyzed</span>
+            <span class="metric">20% EMR cost reduction</span>
+            <span class="metric">Blue-green deployments</span>
+            <span class="metric">Automated IAM scanning</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Experian PLC -->
+      <div class="exp-item">
+        <div class="exp-header" onclick="toggleExp(this)">
+          <div class="exp-dot dot-past"></div>
+          <div class="exp-main">
+            <div class="exp-role">Software Developer</div>
+            <div class="exp-company">Experian PLC · Allen, TX</div>
+          </div>
+          <div class="exp-meta">
+            <div class="exp-date">Feb 2023 – Mar 2025</div>
+            <span class="exp-tag tag-experian">Experian</span>
+            <button class="exp-toggle">Expand</button>
+          </div>
+        </div>
+        <div class="exp-body">
+          <ul class="exp-bullets">
+            <li>Migrated a core ECS microservice to a big-data stack (Apache Spark, Airflow, EMR), achieving a 10x performance improvement for Employment Verifications Batch.</li>
+            <li>Built a secure employer data warehouse processing millions of records daily using Spark, Delta Lake, and PostgreSQL.</li>
+            <li>Refactored multiple components for modularity and maintainability following SOLID design principles.</li>
+          </ul>
+          <div class="exp-metrics">
+            <span class="metric">10x performance gain</span>
+            <span class="metric">Millions of records/day</span>
+            <span class="metric">SOLID architecture</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Amazon -->
+      <div class="exp-item">
+        <div class="exp-header" onclick="toggleExp(this)">
+          <div class="exp-dot dot-amazon"></div>
+          <div class="exp-main">
+            <div class="exp-role">Software Development Engineer</div>
+            <div class="exp-company">Amazon · Seattle, WA</div>
+          </div>
+          <div class="exp-meta">
+            <div class="exp-date">Jun 2022 – Mar 2023</div>
+            <span class="exp-tag tag-amazon">Amazon</span>
+            <button class="exp-toggle">Expand</button>
+          </div>
+        </div>
+        <div class="exp-body">
+          <ul class="exp-bullets">
+            <li>Delivered a real-time ML pipeline for defect detection using Apache Flink, Kinesis, AWS Batch, and SQS — reducing fraudulent activity and customer complaints by 8% with 95% model accuracy.</li>
+            <li>Migrated legacy ingestion to AWS Lambda, Elastic Data Exchange, and Datawave, reducing latency by 3% and infrastructure costs by 5%.</li>
+            <li>Implemented service metrics and alarms for proactive monitoring, saving 4 man-hours per week in debugging and improving SLA response time.</li>
+            <li>Built an ML-based model to identify false-negative product reviews, preventing enforcement issues for legitimate sellers.</li>
+          </ul>
+          <div class="exp-metrics">
+            <span class="metric">8% fraud reduction</span>
+            <span class="metric">95% ML accuracy</span>
+            <span class="metric">4 hrs/wk saved</span>
+            <span class="metric">5% cost reduction</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Experian Intern -->
+      <div class="exp-item">
+        <div class="exp-header" onclick="toggleExp(this)">
+          <div class="exp-dot dot-intern"></div>
+          <div class="exp-main">
+            <div class="exp-role">Data Engineer Intern</div>
+            <div class="exp-company">Experian PLC · Remote</div>
+          </div>
+          <div class="exp-meta">
+            <div class="exp-date">Jun 2021 – Nov 2021</div>
+            <span class="exp-tag tag-experian">Experian</span>
+            <button class="exp-toggle">Expand</button>
+          </div>
+        </div>
+        <div class="exp-body">
+          <ul class="exp-bullets">
+            <li>Developed an automated log-data pipeline using Apache Airflow and Kafka to extract and load logs into Elasticsearch; built Kibana dashboards for analytics.</li>
+            <li>Created automated Kafka connector checks in Airflow for synchronization between source configuration and Kafka servers.</li>
+            <li>Integrated Apache Superset for data preview and performance visualization in Experian's Global Data Hub.</li>
+          </ul>
+          <div class="exp-metrics">
+            <span class="metric">Kafka + Airflow pipeline</span>
+            <span class="metric">Kibana dashboards</span>
+            <span class="metric">Global Data Hub</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="gradient-divider"></div>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="section-inner">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <h2 class="section-title">Technical Skills</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="skills-grid">
+
+      <div class="skill-card cat-lang">
+        <div class="skill-icon">⌨️</div>
+        <div class="skill-cat-name">Languages</div>
+        <div class="skill-tags">
+          <span class="skill-tag">Python</span>
+          <span class="skill-tag">Java</span>
+          <span class="skill-tag">SQL</span>
+          <span class="skill-tag">Kotlin</span>
+        </div>
+      </div>
+
+      <div class="skill-card cat-data">
+        <div class="skill-icon">⚡</div>
+        <div class="skill-cat-name">Data Engineering</div>
+        <div class="skill-tags">
+          <span class="skill-tag">Apache Spark</span>
+          <span class="skill-tag">Apache Flink</span>
+          <span class="skill-tag">Airflow</span>
+          <span class="skill-tag">Glue</span>
+          <span class="skill-tag">Kinesis</span>
+          <span class="skill-tag">Delta Lake</span>
+          <span class="skill-tag">Hive</span>
+          <span class="skill-tag">Hadoop</span>
+        </div>
+      </div>
+
+      <div class="skill-card cat-aws">
+        <div class="skill-icon">☁️</div>
+        <div class="skill-cat-name">AWS Services</div>
+        <div class="skill-tags">
+          <span class="skill-tag">EMR</span>
+          <span class="skill-tag">Lambda</span>
+          <span class="skill-tag">S3</span>
+          <span class="skill-tag">ECS</span>
+          <span class="skill-tag">EC2</span>
+          <span class="skill-tag">IAM</span>
+          <span class="skill-tag">SQS / SNS</span>
+          <span class="skill-tag">CloudWatch</span>
+          <span class="skill-tag">Step Functions</span>
+          <span class="skill-tag">RDS</span>
+        </div>
+      </div>
+
+      <div class="skill-card cat-db">
+        <div class="skill-icon">🗄️</div>
+        <div class="skill-cat-name">Databases</div>
+        <div class="skill-tags">
+          <span class="skill-tag">PostgreSQL</span>
+          <span class="skill-tag">MySQL</span>
+          <span class="skill-tag">ScyllaDB</span>
+          <span class="skill-tag">DynamoDB</span>
+          <span class="skill-tag">Cassandra</span>
+        </div>
+      </div>
+
+      <div class="skill-card cat-devops">
+        <div class="skill-icon">🔧</div>
+        <div class="skill-cat-name">DevOps & IaC</div>
+        <div class="skill-tags">
+          <span class="skill-tag">Terraform</span>
+          <span class="skill-tag">CloudFormation</span>
+          <span class="skill-tag">Docker</span>
+          <span class="skill-tag">Jenkins</span>
+          <span class="skill-tag">Git</span>
+          <span class="skill-tag">CI/CD</span>
+          <span class="skill-tag">CodeDeploy</span>
+        </div>
+      </div>
+
+      <div class="skill-card cat-viz">
+        <div class="skill-icon">📊</div>
+        <div class="skill-cat-name">Monitoring & Viz</div>
+        <div class="skill-tags">
+          <span class="skill-tag">Elasticsearch</span>
+          <span class="skill-tag">Kibana</span>
+          <span class="skill-tag">Superset</span>
+          <span class="skill-tag">Splunk</span>
+          <span class="skill-tag">QuickSight</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="gradient-divider"></div>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="section-inner">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <h2 class="section-title">Key Projects</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="projects-grid">
+
+      <div class="project-card">
+        <div class="project-num">01 / Experian India · FY26</div>
+        <h3 class="project-title">Observed Income Batch Pipeline</h3>
+        <p class="project-desc">Designed and delivered an end-to-end batch processing solution for Observed Income using EMR Spark for large-scale data processing and Airflow for orchestration. Enabled reliable high-volume processing with improved maintainability and observability.</p>
+        <div class="project-impact">↑ Reliable large-volume processing at scale</div>
+        <div class="project-stack">
+          <span class="project-tech">EMR Spark</span>
+          <span class="project-tech">Airflow</span>
+          <span class="project-tech">S3</span>
+          <span class="project-tech">Python</span>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-num">02 / Experian India · FY26</div>
+        <h3 class="project-title">200M-Record PDL Analysis</h3>
+        <p class="project-desc">Executed a massive PDL analysis workflow spanning over 200 million records using EMR Spark. Enabled data and product teams to derive insights at scale and make data-driven product enhancements.</p>
+        <div class="project-impact">↑ 200M+ records processed for product insights</div>
+        <div class="project-stack">
+          <span class="project-tech">EMR Spark</span>
+          <span class="project-tech">S3</span>
+          <span class="project-tech">PySpark</span>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-num">03 / Experian India · FY26</div>
+        <h3 class="project-title">VS Pinning API Infrastructure</h3>
+        <p class="project-desc">Designed and deployed production-ready infrastructure for the VS Pinning API using ECS Fargate, NLB, Secrets Manager, KMS, IAM, and EFS. Delivered secure, highly available infra with fully automated IaC.</p>
+        <div class="project-impact">↑ Secure, scalable production infra via IaC</div>
+        <div class="project-stack">
+          <span class="project-tech">ECS Fargate</span>
+          <span class="project-tech">NLB</span>
+          <span class="project-tech">KMS</span>
+          <span class="project-tech">IAM</span>
+          <span class="project-tech">EFS</span>
+          <span class="project-tech">Terraform</span>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-num">04 / Experian India · FY26</div>
+        <h3 class="project-title">Envoy Optimization — &lt;50ms Latency</h3>
+        <p class="project-desc">Tuned Envoy proxy configurations for VS Pinning to consistently achieve sub-50ms response times and under 200ms at 50 TPS load. Significantly improved user performance and overall service throughput.</p>
+        <div class="project-impact">↓ &lt;50ms p99 latency · &lt;200ms at 50 TPS</div>
+        <div class="project-stack">
+          <span class="project-tech">Envoy</span>
+          <span class="project-tech">ECS</span>
+          <span class="project-tech">CloudWatch</span>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-num">05 / Experian India · FY26</div>
+        <h3 class="project-title">VS Pinning ECS Re-Architecture</h3>
+        <p class="project-desc">Redesigned VS Pinning ECS architecture into independent containerized services (Javalin, Scoring, STD), eliminating Envoy dependency. Enabled blue-green deployments and improved performance through fewer network hops.</p>
+        <div class="project-impact">↑ Blue-green deploys · Reduced network hops</div>
+        <div class="project-stack">
+          <span class="project-tech">ECS Fargate</span>
+          <span class="project-tech">Javalin</span>
+          <span class="project-tech">Docker</span>
+          <span class="project-tech">CloudFormation</span>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-num">06 / Experian India</div>
+        <h3 class="project-title">AWS Optimization Agent</h3>
+        <p class="project-desc">Agentic AI tool that identifies security gaps and validates infrastructure against the AWS Well-Architected Framework. Automates IAM, NIST, and vulnerability scans, producing detailed remediation reports.</p>
+        <div class="project-impact">↑ Automated compliance scanning end-to-end</div>
+        <div class="project-stack">
+          <span class="project-tech">Python</span>
+          <span class="project-tech">Boto3</span>
+          <span class="project-tech">Ollama</span>
+          <span class="project-tech">OpenAI</span>
+          <span class="project-tech">Anthropic</span>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-num">07 / Experian PLC</div>
+        <h3 class="project-title">Employment Verifications Big-Data Migration</h3>
+        <p class="project-desc">Migrated a monolithic ECS microservice to a modern big-data stack — achieving a 10x throughput improvement for a critical batch pipeline processing employment verification data daily.</p>
+        <div class="project-impact">↑ 10× performance improvement</div>
+        <div class="project-stack">
+          <span class="project-tech">Spark</span>
+          <span class="project-tech">Airflow</span>
+          <span class="project-tech">EMR</span>
+          <span class="project-tech">Delta Lake</span>
+          <span class="project-tech">PostgreSQL</span>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-num">08 / Amazon</div>
+        <h3 class="project-title">Real-Time ML Defect Detection</h3>
+        <p class="project-desc">Streaming ML pipeline for real-time product defect detection using Flink + Kinesis, cutting fraudulent activity by 8% with 95% model accuracy. Sub-second decision making at scale.</p>
+        <div class="project-impact">↓ 8% fraud reduction · 95% accuracy</div>
+        <div class="project-stack">
+          <span class="project-tech">Apache Flink</span>
+          <span class="project-tech">Kinesis</span>
+          <span class="project-tech">AWS Batch</span>
+          <span class="project-tech">SQS</span>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-num">09 / Experian Intern</div>
+        <h3 class="project-title">Global Data Hub Log Pipeline</h3>
+        <p class="project-desc">Automated log-data pipeline using Airflow and Kafka to ingest and analyze operational logs. Delivered Kibana dashboards for real-time analytics and integrated Apache Superset for data visualization.</p>
+        <div class="project-impact">↑ Real-time ops observability</div>
+        <div class="project-stack">
+          <span class="project-tech">Airflow</span>
+          <span class="project-tech">Kafka</span>
+          <span class="project-tech">Elasticsearch</span>
+          <span class="project-tech">Kibana</span>
+          <span class="project-tech">Superset</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="gradient-divider"></div>
+
+<!-- EDUCATION -->
+<section id="education">
+  <div class="section-inner">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <h2 class="section-title">Education</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="edu-grid">
+      <div class="edu-card">
+        <div class="edu-year">MS</div>
+        <div class="edu-degree">Master of Science</div>
+        <div class="edu-field">Computer Science</div>
+        <div class="edu-school">Rutgers, The State University of New Jersey</div>
+        <div class="edu-loc">New Brunswick, NJ · 2020 – 2022</div>
+      </div>
+      <div class="edu-card">
+        <div class="edu-year">BS</div>
+        <div class="edu-degree">Bachelor of Science</div>
+        <div class="edu-field">Electronics & Communication Engineering</div>
+        <div class="edu-school">Shiv Nadar University</div>
+        <div class="edu-loc">Noida, UP · 2016 – 2020</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="gradient-divider"></div>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-inner">
+    <h2 class="contact-tagline">Let's build<br>something <em>great.</em></h2>
+    <p class="contact-sub">Open to senior data engineering, cloud architecture, and engineering leadership opportunities. Based in Hyderabad, India.</p>
+    <div class="contact-links">
+      <a href="tel:+919493998833" class="contact-link">
+        <span>📞</span> +91 94939 98833
+      </a>
+      <a href="mailto:chaitanya.vallabhaneni@outlook.com" class="contact-link">
+        <span>✉</span> chaitanya.vallabhaneni@outlook.com
+      </a>
+      <a href="https://linkedin.com/in/chaitanya-vallabhaneni" target="_blank" class="contact-link">
+        <span>in</span> LinkedIn
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2026 · Chaitanya Vallabhaneni</p>
+  <p>AWS Data Engineer · Hyderabad, IN</p>
+</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  function toggleExp(header) {
+    const item = header.closest('.exp-item');
+    const btn = header.querySelector('.exp-toggle');
+    const isOpen = item.classList.contains('open');
+    item.classList.toggle('open');
+    btn.textContent = isOpen ? 'Expand' : 'Collapse';
+  }
+
+  // Intersection observer for fade-in
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.opacity = '1';
+        e.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.
