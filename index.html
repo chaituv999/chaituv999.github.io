@@ -14,9 +14,9 @@
     --accent: #7b5ea7;
     --accent2: #e8643c;
     --accent3: #3cb8e8;
-    --text: #e8e8f0;
-    --text-muted: #7878a0;
-    --text-dim: #4a4a68;
+    --text: #f0f0fa;
+    --text-muted: #a8a8c8;
+    --text-dim: #7070a0;
     --gold: #c9a84c;
   }
 
@@ -827,7 +827,7 @@
 
       <!-- Experian India -->
       <div class="exp-item open">
-        <div class="exp-header" onclick="toggleExp(this)">
+        <div class="exp-header">
           <div class="exp-dot dot-current"></div>
           <div class="exp-main">
             <div class="exp-role">Senior Software Developer</div>
@@ -862,7 +862,7 @@
 
       <!-- Experian PLC -->
       <div class="exp-item">
-        <div class="exp-header" onclick="toggleExp(this)">
+        <div class="exp-header">
           <div class="exp-dot dot-past"></div>
           <div class="exp-main">
             <div class="exp-role">Software Developer</div>
@@ -890,7 +890,7 @@
 
       <!-- Amazon -->
       <div class="exp-item">
-        <div class="exp-header" onclick="toggleExp(this)">
+        <div class="exp-header">
           <div class="exp-dot dot-amazon"></div>
           <div class="exp-main">
             <div class="exp-role">Software Development Engineer</div>
@@ -920,7 +920,7 @@
 
       <!-- Experian Intern -->
       <div class="exp-item">
-        <div class="exp-header" onclick="toggleExp(this)">
+        <div class="exp-header">
           <div class="exp-dot dot-intern"></div>
           <div class="exp-main">
             <div class="exp-role">Data Engineer Intern</div>
@@ -1240,14 +1240,29 @@
   <p>AWS Data Engineer · Hyderabad, IN</p>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-  function toggleExp(header) {
-    const item = header.closest('.exp-item');
-    const btn = header.querySelector('.exp-toggle');
-    const isOpen = item.classList.contains('open');
-    item.classList.toggle('open');
-    btn.textContent = isOpen ? 'Expand' : 'Collapse';
-  }
+<script>
+  // Expand/Collapse experience items
+  document.querySelectorAll('.exp-header').forEach(header => {
+    header.style.cursor = 'pointer';
+    header.addEventListener('click', function(e) {
+      const item = this.closest('.exp-item');
+      const btn = this.querySelector('.exp-toggle');
+      const isOpen = item.classList.contains('open');
+      item.classList.toggle('open');
+      if (btn) btn.textContent = isOpen ? 'Expand' : 'Collapse';
+    });
+  });
+
+  // Prevent button double-firing
+  document.querySelectorAll('.exp-toggle').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      const item = this.closest('.exp-item');
+      const isOpen = item.classList.contains('open');
+      item.classList.toggle('open');
+      this.textContent = isOpen ? 'Expand' : 'Collapse';
+    });
+  });
 
   // Intersection observer for fade-in
   const observer = new IntersectionObserver((entries) => {
@@ -1259,4 +1274,10 @@
     });
   }, { threshold: 0.1 });
 
-  document.
+  document.querySelectorAll('.skill-card, .project-card, .edu-card').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+    el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+    observer.observe(el);
+  });
+</script>
